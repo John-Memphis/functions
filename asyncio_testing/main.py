@@ -5,7 +5,7 @@ import asyncio
 def handler(event, context): # The name of this file and this function should match the handler field in the memphis.yaml file in the following format <file name>.<function name>
     return create_function(event, event_handler = event_handler, use_async=True)
 
-async def event_handler(msg_payload, msg_headers, inputs):
+def event_handler(msg_payload, msg_headers, inputs):
     """
     Parameters:
     - msg_payload (bytes): The byte object representing the message payload.
@@ -16,7 +16,7 @@ async def event_handler(msg_payload, msg_headers, inputs):
     ((bytes), dict)
     """
     # Here is a short example of converting the message to a dict and then back to bytes
-    asyncio.sleep(1)
+    # asyncio.sleep(1)
     payload =  str(msg_payload, 'utf-8')
     as_json = json.loads(payload)
 
