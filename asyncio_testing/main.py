@@ -17,8 +17,8 @@ def event_handler(msg_payload, msg_headers, inputs):
     """
     # Here is a short example of converting the message to a dict and then back to bytes
     # asyncio.sleep(1)
-    payload =  str(msg_payload, 'utf-8')
-    as_json = json.loads(payload)
+    payload =  str(msg_payload, 'utf-8') 
+    as_json = json.loads(payload) 
 
     as_json["test"] = "Asyncio is working, actually"
 
