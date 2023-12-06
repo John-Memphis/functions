@@ -5,4 +5,3 @@ tags:
   - tag: python
 runtime: python3.11
 handler: main.handler
-dependencies: requirements.txt
