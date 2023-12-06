@@ -6,7 +6,7 @@ def handler(event, context): # The name of this file and this function should ma
     return create_function(event, event_handler = event_handler)
 
 def event_handler(msg_payload, msg_headers, inputs):
-    """
+    """ 
     Parameters:
     - msg_payload (bytes): The byte object representing the message payload.
     - msg_headers (dict): A dictionary containing message headers.
