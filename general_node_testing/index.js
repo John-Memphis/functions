@@ -18,7 +18,7 @@ function eventHandler(payload, headers, inputs) {
     payload["test"] = "is working";
 
     return {
-        processedMessage: Buffer.from(JSON.stringify(asJson), 'utf-8'),
+        processedMessage: Buffer.from(JSON.stringify(payload), 'utf-8'),
         processedHeaders: headers
     };
 }
