@@ -1,0 +1,6 @@
+function_name: general_go_testing
+description: Test, test, test
+tags:
+  - tag: json
+  - tag: go
+runtime: go

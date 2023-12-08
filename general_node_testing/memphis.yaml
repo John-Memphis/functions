@@ -1,0 +1,7 @@
+function_name: general_node_testing
+description: Test, test, test
+tags:
+  - tag: json
+  - tag: nodejs
+runtime: nodejs18.x
+handler: index.handler
