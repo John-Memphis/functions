@@ -101,6 +101,8 @@ func UnmarshalIntoStruct(data []byte, userStruct interface{}) error {
 		return err
 	}
 
+	fmt.Println(userStruct)
+
 	return nil
 }
 
