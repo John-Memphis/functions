@@ -26,7 +26,7 @@ func MyEventHandler(message []byte, headers map[string]string, inputs map[string
 func MyEventHandlerSchema(message interface{}, headers map[string]string, inputs map[string]string) (interface{}, map[string]string,  error){
 	typedMessage, ok := message.(Data)
 	if !ok{
-		return nil, nil, fmt.Errorf("Data could not be asserted bruhsky")
+		return nil, nil, fmt.Errorf("Data could not be asserted bruhsky: %v", message)
 	}
 
 	typedMessage.MyData = "This new data is cool"
