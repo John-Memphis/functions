@@ -24,18 +24,18 @@ func MyEventHandler(message []byte, headers map[string]string, inputs map[string
 }
 
 func MyEventHandlerSchema(message interface{}, headers map[string]string, inputs map[string]string) (interface{}, map[string]string,  error){
-	typedMessage, ok := message.(Data)
+	typedMessage, ok := message.(*Data)
 	if !ok{
 		return nil, nil, fmt.Errorf("Data could not be asserted bruhsky: %v, %v", message, reflect.TypeOf(message))
 	}
 
-	typedMessage.Id = "newIDIsWorking"
+	typedMessage.Id = 42
 
 	return message, headers, nil
 }
 
 type Data struct{
-	Id string `json:"id"`
+	Id int32 `json:"id"`
 }
 
 func main() {	
