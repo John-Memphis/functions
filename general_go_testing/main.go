@@ -163,7 +163,7 @@ func CreateFunction(options ...HandlerOption) {
 			} else {
 				UnmarshalIntoStruct(payload, params.UserObject)
 				var tmpPayload interface{}
-				tmpPayload, modifiedHeaders, err = params.HandlerWithSchema(payload, msg.Headers, event.Inputs) // err will proagate to next if
+				tmpPayload, modifiedHeaders, err = params.HandlerWithSchema(params.UserObject, msg.Headers, event.Inputs) // err will proagate to next if
 				if err == nil {
 					modifiedPayload, err = json.Marshal(tmpPayload) // err will proagate to next if
 				}
