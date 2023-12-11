@@ -102,6 +102,7 @@ func UnmarshalIntoStruct(data []byte, userStruct interface{}) error {
 	}
 
 	fmt.Println(userStruct)
+	fmt.Println(reflect.TypeOf(userStruct))
 
 	return nil
 }
@@ -168,7 +169,7 @@ func CreateFunction(options ...HandlerOption) {
 			} else {
 				UnmarshalIntoStruct(payload, params.UserObject)
 				var tmpPayload interface{}
-				tmpPayload, modifiedHeaders, err = params.HandlerWithSchema(any(params.UserObject), msg.Headers, event.Inputs) // err will proagate to next if
+				tmpPayload, modifiedHeaders, err = params.HandlerWithSchema(params.UserObject, msg.Headers, event.Inputs) // err will proagate to next if
 				if err == nil {
 					modifiedPayload, err = json.Marshal(tmpPayload) // err will proagate to next if
 				}
