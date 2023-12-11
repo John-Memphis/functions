@@ -29,13 +29,13 @@ func MyEventHandlerSchema(message interface{}, headers map[string]string, inputs
 		return nil, nil, fmt.Errorf("Data could not be asserted bruhsky: %v, %v", message, reflect.TypeOf(message))
 	}
 
-	typedMessage.MyData = "This new data is cool"
+	typedMessage.Id = "newIDIsWorking"
 
 	return message, headers, nil
 }
 
 type Data struct{
-	MyData string `json:"my_data"`
+	Id string `json:"id"`
 }
 
 func main() {	
