@@ -16,7 +16,7 @@ func MyEventHandler(message []byte, headers map[string]string, inputs map[string
 
 	var event map[string]interface{}
 	json.Unmarshal(message, &event)
-	event[inputs["field_to_ingest"]] = "Hello from Memphis!"
+	event["Testing"] = "Working"
 	
 	// Return the payload back as []bytes
 	eventBytes, _ := json.Marshal(event)
