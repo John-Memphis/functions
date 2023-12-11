@@ -23,11 +23,22 @@ func MyEventHandler(message []byte, headers map[string]string, inputs map[string
 	return eventBytes, headers, nil
 }
 
+func MyEventHandlerSchema(message interface{}, headers map[string]string, inputs map[string]string) (interface{}, map[string]string,  error){
+	typedMessage := message.(Data)
 
-func main() {	
-	CreateFunction(EventHandlerOption(MyEventHandler))
+	typedMessage.MyData = "This new data is cool"
+
+	return message, headers, nil
 }
 
+type Data struct{
+	MyData string `json:"my_data"`
+}
+
+func main() {	
+	var data Data
+	CreateFunction(EventHandlerSchemaOption(MyEventHandlerSchema, &data))
+}
 
 
 type MemphisMsg struct {
