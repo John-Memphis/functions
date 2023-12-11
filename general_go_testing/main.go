@@ -147,7 +147,7 @@ func CreateFunction(options ...HandlerOption) {
 
 			var modifiedPayload interface{}
 			var modifiedHeaders map[string]string
-			if params.UserObject != nil {
+			if params.UserObject == nil {
 				modifiedPayload, modifiedHeaders, err = params.Handler(payload, msg.Headers, event.Inputs)
 			} else {
 				UnmarshalIntoStruct(payload, params.UserObject)
