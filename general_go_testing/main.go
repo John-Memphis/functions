@@ -24,7 +24,10 @@ func MyEventHandler(message []byte, headers map[string]string, inputs map[string
 }
 
 func MyEventHandlerSchema(message interface{}, headers map[string]string, inputs map[string]string) (interface{}, map[string]string,  error){
-	typedMessage := message.(Data)
+	typedMessage, ok := message.(Data)
+	if !ok{
+		return nil, nil, fmt.Errorf("Data could not be asserted bruhsky")
+	}
 
 	typedMessage.MyData = "This new data is cool"
 
@@ -163,7 +166,7 @@ func CreateFunction(options ...HandlerOption) {
 			} else {
 				UnmarshalIntoStruct(payload, params.UserObject)
 				var tmpPayload interface{}
-				tmpPayload, modifiedHeaders, err = params.HandlerWithSchema(params.UserObject, msg.Headers, event.Inputs) // err will proagate to next if
+				tmpPayload, modifiedHeaders, err = params.HandlerWithSchema(any(params.UserObject), msg.Headers, event.Inputs) // err will proagate to next if
 				if err == nil {
 					modifiedPayload, err = json.Marshal(tmpPayload) // err will proagate to next if
 				}
