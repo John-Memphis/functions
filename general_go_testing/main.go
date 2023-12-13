@@ -41,8 +41,9 @@ type Data struct{
 }
 
 func main() {	
-	var data Data
-	CreateFunction(ObjectHandler, ObjectOption(&data))
+	// var data Data
+	// CreateFunction(ObjectHandler, ObjectOption(&data))
+	CreateFunction(BytesHandler)
 }
 
 type MemphisMsg struct {
