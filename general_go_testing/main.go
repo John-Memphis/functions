@@ -11,22 +11,24 @@ import (
 )
 
 // https://github.com/memphisdev/memphis.go#creating-a-memphis-function
-func MyEventHandler(message []byte, headers map[string]string, inputs map[string]string) ([]byte, map[string]string,  error){
+func BytesHandler(message any, headers map[string]string, inputs map[string]string) (any, map[string]string,  error){
 	// Here is a short example of converting the message payload to bytes and back
+	as_bytes, ok := message.(*[]byte)
+	if !ok{
+		return nil, nil, fmt.Errorf("object failed type assertion: %v, %v", message, reflect.TypeOf(message))
+	}
 
 	var event map[string]interface{}
-	json.Unmarshal(message, &event)
+	json.Unmarshal(*as_bytes, &event)
 	event["Testing"] = "Working"
 	
-	// Return the payload back as []bytes
-	eventBytes, _ := json.Marshal(event)
-	return eventBytes, headers, nil
+	return event, headers, nil
 }
 
-func MyEventHandlerSchema(message interface{}, headers map[string]string, inputs map[string]string) (interface{}, map[string]string,  error){
+func ObjectHandler(message any, headers map[string]string, inputs map[string]string) (any, map[string]string,  error){
 	typedMessage, ok := message.(*Data)
 	if !ok{
-		return nil, nil, fmt.Errorf("Data could not be asserted bruhsky: %v, %v", message, reflect.TypeOf(message))
+		return nil, nil, fmt.Errorf("object failed type assertion: %v, %v", message, reflect.TypeOf(message))
 	}
 
 	typedMessage.Id = 42
@@ -39,10 +41,9 @@ type Data struct{
 }
 
 func main() {	
-	var data Data
-	CreateFunction(EventHandlerSchemaOption(MyEventHandlerSchema, &data))
+	// var data Data
+	CreateFunction(BytesHandler)
 }
-
 
 type MemphisMsg struct {
 	Headers map[string]string `json:"headers"`
@@ -68,46 +69,33 @@ type MemphisOutput struct {
 // EventHandlerFunction gets the message payload as []byte, message headers as map[string]string and inputs as map[string]string and should return the modified payload and headers.
 // error should be returned if the message should be considered failed and go into the dead-letter station.
 // if all returned values are nil the message will be filtered out of the station.
-type EventHandler func([]byte, map[string]string, map[string]string) ([]byte, map[string]string, error)
-type HandlerWithSchema func(interface{}, map[string]string, map[string]string) (interface{}, map[string]string, error)
+type HandlerType func(any, map[string]string, map[string]string) (any, map[string]string, error)
 
 type HandlerOption func(*HandlerOptions) error
 
 type HandlerOptions struct {
-	Handler           EventHandler
-	HandlerWithSchema HandlerWithSchema
-	UserObject        interface{}
+	Handler           HandlerType
+	UserObject        any
 }
 
-func EventHandlerOption(handler EventHandler) HandlerOption {
+func ObjectOption(schema any) HandlerOption {
 	return func(handlerOptions *HandlerOptions) error {
-		handlerOptions.Handler = handler
-		return nil
-	}
-}
-
-func EventHandlerSchemaOption(handler HandlerWithSchema, schema interface{}) HandlerOption {
-	return func(handlerOptions *HandlerOptions) error {
-		handlerOptions.HandlerWithSchema = handler
 		handlerOptions.UserObject = schema
 		return nil
 	}
 }
 
-func UnmarshalIntoStruct(data []byte, userStruct interface{}) error {
+func UnmarshalIntoStruct(data []byte, userStruct any) error {
 	// Unmarshal JSON data into the struct
 	err := json.Unmarshal(data, userStruct)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(userStruct)
-	fmt.Println(reflect.TypeOf(userStruct))
-
 	return nil
 }
 
-func checkValidStruct(userStruct interface{}) error {
+func checkValidStruct(userStruct any) error {
 	// Check if the provided variable is a pointer to a struct
 	valueOf := reflect.ValueOf(userStruct)
 	if valueOf.Kind() != reflect.Ptr || valueOf.Elem().Kind() != reflect.Struct {
@@ -118,14 +106,15 @@ func checkValidStruct(userStruct interface{}) error {
 }
 
 // This function creates a Memphis function and processes events with the passed-in eventHandler function.
-// eventHandlerFunction gets the message payload as []byte, message headers as map[string]string and inputs as map[string]string and should return the modified payload and headers.
+// eventHandlerFunction gets the message payload as []byte or as the user specified type, 
+// message headers as map[string]string and inputs as map[string]string and should return the modified payload and headers.
+// The modified payload type will either be the user type, or []byte depending on which function type is used.
 // error should be returned if the message should be considered failed and go into the dead-letter station.
 // if all returned values are nil the message will be filtered out from the station.
-func CreateFunction(options ...HandlerOption) {
+func CreateFunction(eventHandler HandlerType, options ...HandlerOption) {
 	LambdaHandler := func(ctx context.Context, event *MemphisEvent) (*MemphisOutput, error) {
 		params := HandlerOptions{
-			Handler:           nil,
-			HandlerWithSchema: nil,
+			Handler:           eventHandler,
 			UserObject:        nil,
 		}
 
@@ -162,17 +151,19 @@ func CreateFunction(options ...HandlerOption) {
 				continue
 			}
 
-			var modifiedPayload interface{}
-			var modifiedHeaders map[string]string
-			if params.UserObject == nil {
-				modifiedPayload, modifiedHeaders, err = params.Handler(payload, msg.Headers, event.Inputs)
-			} else {
+			var handlerInput any
+			if params.UserObject != nil{
 				UnmarshalIntoStruct(payload, params.UserObject)
-				var tmpPayload interface{}
-				tmpPayload, modifiedHeaders, err = params.HandlerWithSchema(params.UserObject, msg.Headers, event.Inputs) // err will proagate to next if
-				if err == nil {
-					modifiedPayload, err = json.Marshal(tmpPayload) // err will proagate to next if
-				}
+				handlerInput = params.UserObject
+			}else{
+				handlerInput = payload
+			}
+
+			modifiedPayload, modifiedHeaders, err := params.Handler(handlerInput, msg.Headers, event.Inputs)
+			_, ok := modifiedPayload.([]byte)
+
+			if err == nil && !ok{
+				modifiedPayload, err = json.Marshal(modifiedPayload) // err will proagate to next if
 			}
 
 			if err != nil {
