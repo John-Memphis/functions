@@ -133,10 +133,8 @@ func CreateFunction(eventHandler HandlerType, options ...HandlerOption) {
 			}
 		}
 
-		if len(options) == 0 {
-			return nil, fmt.Errorf("the user must pass in at least one option containing the handler function, or the handler with schema function and its schema")
-		} else if len(options) > 1 {
-			return nil, fmt.Errorf("the user passed in too many options. Functions only supports giivng one option")
+		if len(options) > 1 {
+			return nil, fmt.Errorf("the user passed in too many options. Functions only supports one handler option")
 		}
 
 		var processedEvent MemphisOutput
