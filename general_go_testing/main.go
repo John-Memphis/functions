@@ -13,13 +13,13 @@ import (
 // https://github.com/memphisdev/memphis.go#creating-a-memphis-function
 func BytesHandler(message any, headers map[string]string, inputs map[string]string) (any, map[string]string,  error){
 	// Here is a short example of converting the message payload to bytes and back
-	as_bytes, ok := message.(*[]byte)
+	as_bytes, ok := message.([]byte)
 	if !ok{
 		return nil, nil, fmt.Errorf("object failed type assertion: %v, %v", message, reflect.TypeOf(message))
 	}
 
 	var event map[string]interface{}
-	json.Unmarshal(*as_bytes, &event)
+	json.Unmarshal(as_bytes, &event)
 	event["Testing"] = "Working"
 	
 	return event, headers, nil
@@ -154,7 +154,7 @@ func CreateFunction(eventHandler HandlerType, options ...HandlerOption) {
 				UnmarshalIntoStruct(payload, params.UserObject)
 				handlerInput = params.UserObject
 			}else{
-				handlerInput = &payload
+				handlerInput = payload
 			}
 
 			modifiedPayload, modifiedHeaders, err := params.Handler(handlerInput, msg.Headers, event.Inputs)
