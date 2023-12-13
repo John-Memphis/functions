@@ -154,7 +154,7 @@ func CreateFunction(eventHandler HandlerType, options ...HandlerOption) {
 				UnmarshalIntoStruct(payload, params.UserObject)
 				handlerInput = params.UserObject
 			}else{
-				handlerInput = payload
+				handlerInput = &payload
 			}
 
 			modifiedPayload, modifiedHeaders, err := params.Handler(handlerInput, msg.Headers, event.Inputs)
