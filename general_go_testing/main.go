@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"reflect"
 
-	"google.golang.org/protobuf/proto"
+	// "google.golang.org/protobuf/proto"
 	// "google.golang.org/protobuf/reflect/protoreflect"
-	"go_template/user_message"
+	// "go_template/user_message"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
@@ -20,13 +20,15 @@ func BytesHandler(message any, headers map[string]string, inputs map[string]stri
 	// Here is a short example of converting the message payload to bytes and back
 	as_bytes, _ := message.([]byte)
 
-	var msg user_message.Message
+	var event Data
+	json.Unmarshal(as_bytes, event)
+	event.Id = 42
 
-	proto.Unmarshal(as_bytes, &msg)
+	// var msg user_message.Message
+	// proto.Unmarshal(as_bytes, &msg)
+	// print(msg.FoodName, msg.FoodScore, msg.FoodType)
 
-	print(msg.FoodName, msg.FoodScore, msg.FoodType)
-
-	return msg, headers, nil
+	return event, headers, nil
 }
 
 func ObjectHandler(message any, headers map[string]string, inputs map[string]string) (any, map[string]string,  error){
