@@ -1,4 +1,4 @@
-function_name: general_go_testing
+function_name: protobuf_testing
 description: Test, test, test
 tags:
   - tag: json
