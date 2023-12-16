@@ -56,7 +56,7 @@ type Data struct{
 
 func main() {	
 	var data Data
-	CreateFunction(ObjectHandler, JSONOption(&data))
+	CreateFunction(ObjectHandler, PayloadInfo(&data, JSON))
 	// CreateFunction(BytesHandler)
 }
 
@@ -103,10 +103,10 @@ const (
 	JSON 
 )
 
-func JSONOption(schema any) PayloadOption {
+func PayloadInfo(schema any, schemaType PayloadTypes) PayloadOption {
 	return func(payloadOptions *PayloadOptions) error {
 		payloadOptions.UserObject = schema
-		payloadOptions.PayloadType = JSON
+		payloadOptions.PayloadType = schemaType
 		return nil
 	}
 }
