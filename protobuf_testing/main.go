@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"reflect"
 
-	// "google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 	// "google.golang.org/protobuf/reflect/protoreflect"
-	// "go_template/user_message"
+	"go_template_proto/user_message"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
@@ -18,25 +18,15 @@ import (
 // https://github.com/memphisdev/memphis.go#creating-a-memphis-function
 func BytesHandler(message any, headers map[string]string, inputs map[string]string) (any, map[string]string,  error){
 	// Here is a short example of converting the message payload to bytes and back
-	as_bytes, ok := message.([]byte)
+	as_bytes, _ := message.([]byte)
 
-	if !ok {
-		return nil, nil, fmt.Errorf("object failed type assertion: %v, %v", message, reflect.TypeOf(message))
-	}
+	var msg user_message.Message
 
-	var event Data
-	err := json.Unmarshal(as_bytes, &event)
-	if err != nil{
-		return nil, nil, err
-	}
+	proto.Unmarshal(as_bytes, &msg)
 
-	event.Id = 42
+	print(msg.FoodName, msg.FoodScore, msg.FoodType)
 
-	// var msg user_message.Message
-	// proto.Unmarshal(as_bytes, &msg)
-	// print(msg.FoodName, msg.FoodScore, msg.FoodType)
-
-	return event, headers, nil
+	return msg, headers, nil
 }
 
 func ObjectHandler(message any, headers map[string]string, inputs map[string]string) (any, map[string]string,  error){

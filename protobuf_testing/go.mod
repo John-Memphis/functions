@@ -1,4 +1,4 @@
-module go_template
+module go_template_proto
 
 go 1.19
 
