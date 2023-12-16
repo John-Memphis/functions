@@ -21,7 +21,7 @@ func BytesHandler(message any, headers map[string]string, inputs map[string]stri
 	as_bytes, _ := message.([]byte)
 
 	var event Data
-	json.Unmarshal(as_bytes, event)
+	json.Unmarshal(as_bytes, &event)
 	event.Id = 42
 
 	// var msg user_message.Message
