@@ -102,6 +102,8 @@ async function createFunction(memphis_event, eventHandler, as_json = false) {
                     processedHeaders = maybeAsyncEvent.processedHeaders;
                 }
 
+                
+
                 if (processedMessage instanceof Uint8Array && processedHeaders instanceof Object) {
                     processedEvents.messages.push({
                         headers: processedHeaders,
