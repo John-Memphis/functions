@@ -55,9 +55,9 @@ type Data struct{
 }
 
 func main() {	
-	// var data Data
-	// CreateFunction(ObjectHandler, ObjectOption(&data))
-	CreateFunction(BytesHandler)
+	var data Data
+	CreateFunction(ObjectHandler, JSONOption(&data))
+	// CreateFunction(BytesHandler)
 }
 
 // ========================================================================
