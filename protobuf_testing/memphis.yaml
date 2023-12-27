@@ -1,6 +1,0 @@
-function_name: protobuf_testing
-description: Test, test, test
-tags:
-  - tag: json
-  - tag: go
-runtime: go

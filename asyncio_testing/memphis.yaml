@@ -1,7 +1,0 @@
-function_name: asyncio_testing
-description: Testing if asyncio is working..
-tags:
-  - tag: json
-  - tag: python
-runtime: python3.11
-handler: main.handler

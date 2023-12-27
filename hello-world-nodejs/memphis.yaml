@@ -1,9 +1,0 @@
-function_name: hello-world-nodejs
-description: Hello world function in Node.js
-tags:
-  - tag: json
-  - tag: nodejs
-runtime: nodejs18.x
-inputs:
-  - name: field_to_ingest
-handler: index.handler
