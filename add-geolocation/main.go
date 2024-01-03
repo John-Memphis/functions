@@ -16,7 +16,6 @@ func (e *ConversionError) Error() string {
 }
 
 func EventHandler(message any, headers map[string]string, inputs map[string]string) (any, map[string]string,  error){
-	fmt.Println(message)
 	event := *message.(*map[string]any)
 
 	ip, ok := event[inputs["geolocation"]].(string)
