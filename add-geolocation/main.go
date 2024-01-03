@@ -17,7 +17,7 @@ func (e *ConversionError) Error() string {
 
 func EventHandler(message any, headers map[string]string, inputs map[string]string) (any, map[string]string,  error){
 	fmt.Println(message)
-	event := message.(jsonType)
+	event := *message.(*map[string]any)
 
 	ip, ok := event[inputs["geolocation"]].(string)
 
@@ -44,9 +44,7 @@ func EventHandler(message any, headers map[string]string, inputs map[string]stri
 	return event, headers, nil
 }
 
-type jsonType map[string]any
-
 func main() {	
-	var schema jsonType
+	var schema map[string]any
 	memphis.CreateFunction(EventHandler, memphis.PayloadAsJSON(&schema))
 }
